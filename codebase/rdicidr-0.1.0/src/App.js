@@ -8,13 +8,23 @@ function App() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/secret')
-      .then(response => response.json())
-      .then(data => {
+    // Dynamically determine API base URL for dev/prod environments
+    const apiBase =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:8080'
+        : '';
+    fetch(`${apiBase}/api/secret`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
         setSecret(data.secret);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError('Failed to load secret');
         setLoading(false);
       });
@@ -25,9 +35,11 @@ function App() {
       <header className="App-header">
         <div>CIDR Calculator</div>
         <div style={{ fontSize: '14px', marginTop: '10px' }}>
-          {loading ? 'Loading secret...' : 
-           error ? `Error: ${error}` : 
-           `MY_SECRET: ${secret}`}
+          {loading
+            ? 'Loading secret...'
+            : error
+            ? `Error: ${error}`
+            : `MY_SECRET: ${secret}`}
         </div>
       </header>
       <IPv4Addr />
