@@ -4,6 +4,8 @@ on:
   pull_request:
     branches: [ main, master ]
     types: [ opened, synchronize, reopened ]
+  push:
+    branches: [ main, master ]
 
 jobs:
   ci:
@@ -22,25 +24,31 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0/package-lock.json
         
     - name: Install dependencies
+      working-directory: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0
       run: npm ci
       
     - name: Run ESLint
+      working-directory: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0
       run: npm run lint
       
     - name: Run Prettier check
+      working-directory: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0
       run: npm run prettier
       
     - name: Run tests
+      working-directory: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0
       run: CI=true npm run test -- --watchAll=false --coverage --passWithNoTests
       
     - name: Build application
+      working-directory: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0
       run: npm run build
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-files
-        path: build/
+        path: Complete-Coding-Challenge-Z/codebase/rdicidr-0.1.0/build/
         retention-days: 7
